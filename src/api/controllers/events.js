@@ -46,28 +46,72 @@ const postEvent = async (req, res, next) => {
 const updateEvent = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const newEvent = new Event(req.body);
+    const { participants, leave, ...otherfield } = req.body;
+    let updateData = {};
+
+    if (req.user.rol === 'admin') {
+      updateData = { ...otherfield };
+    }
+
     if (req.file) {
+      if (req.user.rol !== 'admin') {
+        return res
+          .status(403)
+          .json('Sólo los admin pueden actualizar la imagen del evento');
+      }
+
       const eventToUpdate = await Event.findById(id);
-      if (eventToUpdate) {
-        if (eventToUpdate.img) {
-          deleteFile(eventToUpdate.img);
-          newEvent.img = req.file.path;
-        } else {
-          newEvent.img = req.file.path;
-        }
-      } else {
+      if (!eventToUpdate) {
         return res.status(404).json('Evento no encontrado');
       }
-    }
-    newEvent._id = id;
 
-    const eventUpdated = await Event.findByIdAndUpdate(id, newEvent, {
-      new: true
-    });
+      if (eventToUpdate.img) {
+        deleteFile(eventToUpdate.img);
+      }
+      updateData.img = req.file.path;
+    }
+
+    let eventUpdated;
+
+    if (participants) {
+      if (participants !== req.user.id && req.user.rol !== 'admin') {
+        return res
+          .status(403)
+          .json(
+            'No puedes modificar la asistencia de otro usuario salvo que seas admin'
+          );
+      }
+
+      await Event.findByIdAndUpdate(id, updateData);
+
+      if (leave) {
+        eventUpdated = await Event.findByIdAndUpdate(
+          id,
+          { $pull: { participants: participants } },
+          { new: true }
+        );
+      } else {
+        eventUpdated = await Event.findByIdAndUpdate(
+          id,
+          { $addToSet: { participants: participants } },
+          { new: true }
+        );
+      }
+    } else {
+      if (req.user.rol !== 'admin') {
+        return res
+          .status(403)
+          .json('No tienes permiso para modificar este evento');
+      }
+
+      eventUpdated = await Event.findByIdAndUpdate(id, updateData, {
+        new: true
+      });
+    }
+
     return res.status(200).json(eventUpdated);
   } catch (error) {
-    return res.status(400).json('error en actualizar el evento');
+    return res.status(400).json('Error en actualizar el evento');
   }
 };
 
