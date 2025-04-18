@@ -4,6 +4,11 @@ const { connectDB } = require('./src/config/db');
 const eventsRouter = require('./src/api/routers/events');
 const usersRouter = require('./src/api/routers/users');
 const cloudinary = require('cloudinary').v2;
+const cors = require('cors');
+const {
+  forgotPassword
+} = require('./src/api/controllers/forgotPasswordController');
+const forgotPasswordRouter = require('./src/api/routers/forgotPassword');
 
 const app = express();
 cloudinary.config({
@@ -17,9 +22,11 @@ cloudinary.config({
 connectDB();
 
 app.use(express.json());
+app.use(cors());
 
 app.use('/api/v1/events', eventsRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/auth/', forgotPasswordRouter);
 
 app.use((req, res, next) => {
   return res.status(404).json('Route not found');

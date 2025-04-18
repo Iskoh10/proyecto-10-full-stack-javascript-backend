@@ -4,8 +4,6 @@ const isCurrentUserOrAdmin = (req, res, next) => {
     const userId = req.user._id.toString();
     const userRol = req.user.rol;
 
-    console.log('ROL:', req.user.rol);
-    console.log('USER:', req.user);
     if (userRol === 'admin') {
       return next();
     }
