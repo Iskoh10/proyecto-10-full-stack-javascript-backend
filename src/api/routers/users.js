@@ -16,7 +16,7 @@ const {
 const usersRouter = require('express').Router();
 
 usersRouter.get('/', [isAdmin], getAllUsers);
-usersRouter.get('/:id', [isAdmin], getUserById);
+usersRouter.get('/:id', [isAuth], getUserById);
 usersRouter.post('/register', upload.single('img'), registerUser);
 usersRouter.post('/login', loginUser);
 usersRouter.put(
