@@ -134,10 +134,24 @@ const deleteEvent = async (req, res, next) => {
   }
 };
 
+const getUserAttendingEvents = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const events = await Event.find({
+      participants: userId
+    }).populate('participants', 'nameUser');
+    return res.status(200).json(events);
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+};
+
 module.exports = {
   getAllEvents,
   getEventById,
   postEvent,
   updateEvent,
-  deleteEvent
+  deleteEvent,
+  getUserAttendingEvents
 };
