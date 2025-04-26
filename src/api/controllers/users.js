@@ -1,5 +1,5 @@
 const { deleteFile } = require('../../utils/deleteFiles');
-const { crearToken, generateSign } = require('../../utils/jwt');
+const { generateSign } = require('../../utils/jwt');
 const User = require('../models/users');
 const bcrypt = require('bcrypt');
 
@@ -78,6 +78,10 @@ const updateUser = async (req, res, next) => {
   try {
     const { id, rol } = req.params;
     const newUser = new User(req.body);
+
+    if (req.body.password) {
+      newUser.password = bcrypt.hashSync(req.body.password, 10);
+    }
 
     if (req.file) {
       const userToUpdate = await User.findById(id);
