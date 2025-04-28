@@ -5,9 +5,6 @@ const eventsRouter = require('./src/api/routers/events');
 const usersRouter = require('./src/api/routers/users');
 const cloudinary = require('cloudinary').v2;
 const cors = require('cors');
-const {
-  forgotPassword
-} = require('./src/api/controllers/forgotPasswordController');
 const forgotPasswordRouter = require('./src/api/routers/forgotPassword');
 
 const app = express();
@@ -16,8 +13,6 @@ cloudinary.config({
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET
 });
-
-//! IMPLEMENTAR QUE SI HAY CAMBIOS DE EVENTOS SE AVISE AL USUARIO AL ENTRAR EN SU PERFIL.
 
 connectDB();
 
