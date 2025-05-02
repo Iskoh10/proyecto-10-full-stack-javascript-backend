@@ -21,7 +21,7 @@ const forgotPassword = {
       const token = jwt.sign({ id: user._id }, process.env.TOKEN_REC_PASS, {
         expiresIn: '1h'
       });
-      console.log(token);
+
       user.tokenResetPassword = token;
       user.tokenResetExpires = Date.now() + 3600000;
       await user.save();
@@ -39,9 +39,22 @@ const forgotPassword = {
       const mailOptions = {
         from: process.env.EMAIL_ADDRESS,
         to: `${user.email}`,
-        subject:
-          'Enlace de recuperación de su cuenta en La boutique del Cangrejo',
-        text: `${emailPort}/resetpassword/${user.id}/${token}`
+        subject: 'Recuperación de contraseña - La boutique del Cangrejo',
+        text: `
+        Hola ${user.nameUser || ''},
+
+        Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en La boutique del Cangrejo.
+
+        Por favor, haz click en el siguiente enlace para establecer una nueva contraseña:
+        ${emailPort}/resetpassword/${user.id}/${token}
+
+        Este enlace es válido por 1 hora.
+
+        Si no solicitaste este cambio, puedes ignorar este mensaje.
+        
+        Saludos cordiales,
+        El equipo de la boutique del Cangrejo
+        `.trim()
       };
 
       transporter.sendMail(mailOptions, (err, response) => {

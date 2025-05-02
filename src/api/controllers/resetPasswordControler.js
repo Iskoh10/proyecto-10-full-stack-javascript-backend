@@ -31,36 +31,3 @@ const resetPassword = async (req, res) => {
 };
 
 module.exports = { resetPassword };
-
-//! Se vaya al events y limpie la url
-/*
-let regExPassword =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,16}$/;
-
-const resetPassword = {
-  async reset(req, res) {
-    if (!regExPassword.test(req.body.password)) {
-      res.send({
-        message:
-          'La contraseña debe tener al menos 8-16 caracteres, un numero, una letra minuscula, una letra mayuscula y un caracter especial'
-      });
-      return;
-    }
-
-    try {
-      req.body.password = await bcrypt.hashSync(req.body.password, 10);
-      const resetPassword = await User.updateMany(req.body, {
-        where: {
-          id: req.params.id,
-          tokenresetpassword: req.params.tokenresetpassword
-        }
-      });
-      res.status(201).send({
-        message: 'Contraseña cambiada con éxito'
-      });
-    } catch (error) {
-      res.status(500).send({ message: 'este error', error });
-    }
-  }
-};
-*/
