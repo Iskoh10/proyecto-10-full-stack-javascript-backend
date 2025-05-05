@@ -13,7 +13,7 @@ const getAllEvents = async (req, res, next) => {
 const getEventById = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const event = await Event.findById(id);
+    const event = await Event.findById(id).populate('participants');
     return res.status(200).json(event);
   } catch (error) {
     return res.status(400).json('error en recuperar ese evento');
