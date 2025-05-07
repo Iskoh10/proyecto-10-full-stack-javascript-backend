@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
+    const users = await User.find({}, 'nameUser id rol');
     return res.status(200).json(users);
   } catch (error) {
     return res.status(400).json('error en recuperar todos los usuarios');
