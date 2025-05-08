@@ -20,6 +20,34 @@ const getEventById = async (req, res, next) => {
   }
 };
 
+const sortEvents = async (req, res, next) => {
+  const { sort } = req.query;
+
+  let sortOption;
+
+  if (sort === 'date') {
+    sortOption = { date: 1 };
+  } else if (sort === 'popularity') {
+    sortOption = { participantsCount: -1 };
+  }
+
+  try {
+    const events = await Event.aggregate([
+      {
+        $addFields: {
+          participantsCount: { $size: '$participants' }
+        }
+      },
+      {
+        $sort: sortOption
+      }
+    ]);
+    return res.status(200).json(events);
+  } catch (error) {
+    return res.status(500).json('error al obtener los eventos');
+  }
+};
+
 const postEvent = async (req, res, next) => {
   try {
     const event = new Event(req.body);
@@ -150,6 +178,7 @@ const getUserAttendingEvents = async (req, res, next) => {
 module.exports = {
   getAllEvents,
   getEventById,
+  sortEvents,
   postEvent,
   updateEvent,
   deleteEvent,
