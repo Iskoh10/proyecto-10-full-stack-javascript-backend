@@ -1,6 +1,5 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const User = require('../../api/models/users');
 const users = require('../../data/users');
 
@@ -8,19 +7,19 @@ const launchSeed = async () => {
   try {
     await mongoose.connect(process.env.DB_URL);
 
-    const usersHashed = () => {
-      return users.map((user) => {
-        const hashedPassword = bcrypt.hashSync(user.password, 10);
-        return {
-          ...user,
-          password: hashedPassword
-        };
-      });
-    };
-    // const result = usersHashed();
-    // console.log(result);
-    await User.insertMany(usersHashed());
-    console.log('Usuarios introducidos en la bbdd');
+    for (const user of users) {
+      const existingUser = await User.findOne({ email: user.email });
+
+      if (existingUser) {
+        console.log(`El usuario con email ${user.email} ya existe.`);
+        continue;
+      }
+
+      const newUser = new User(user);
+
+      await newUser.save();
+      console.log(`Usuario ${user.email} añadido`);
+    }
 
     await mongoose.disconnect();
     console.log('Desconectamos de la BBDD');
