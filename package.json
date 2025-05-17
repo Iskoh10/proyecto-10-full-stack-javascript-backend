@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "seed": "node ./src/utils/seed/events.seed.js"
+    "seed": "node ./src/utils/seeds/events.seed.js",
+    "seedUser": "node ./src/utils/seeds/users.seed.js"
   },
   "keywords": [],
   "author": "",
